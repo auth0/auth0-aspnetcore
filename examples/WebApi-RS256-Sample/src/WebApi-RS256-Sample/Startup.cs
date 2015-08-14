@@ -1,28 +1,32 @@
-﻿using Microsoft.AspNet.Builder;
+﻿using System.IO;
+using System.Threading.Tasks;
+
+using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Authentication.OAuthBearer;
-using Microsoft.Framework.ConfigurationModel;
+using Microsoft.Framework.Configuration;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Logging;
 using Microsoft.Framework.OptionsModel;
-using System.Threading.Tasks;
+using WebApiSample.Properties;
 
 namespace WebApiSample
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; set; }
+
         public Startup(IHostingEnvironment env)
         {
-            this.Configuration = new Configuration()
+            this.Configuration = new ConfigurationBuilder(Path.GetFullPath(Path.Combine(env.WebRootPath, "..")))
                 .AddJsonFile("config.json")
-                .AddEnvironmentVariables();
+                .AddEnvironmentVariables()
+                .Build();
         }
-
-        public IConfiguration Configuration { get; set; }
         
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<Auth0Settings>(this.Configuration.GetSubKey("Auth0"));
+            services.Configure<Auth0Settings>(Configuration.GetConfigurationSection("Auth0"));
             services.AddMvc();
         }
 

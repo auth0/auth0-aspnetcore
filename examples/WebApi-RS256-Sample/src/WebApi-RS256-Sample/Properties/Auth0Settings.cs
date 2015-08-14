@@ -1,4 +1,4 @@
-﻿namespace WebApiSample
+﻿namespace WebApiSample.Properties
 {
     public class Auth0Settings
     {
