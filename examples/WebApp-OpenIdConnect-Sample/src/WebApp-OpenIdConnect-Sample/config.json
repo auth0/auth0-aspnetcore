@@ -1,0 +1,10 @@
+{
+  "AppSettings": {
+    "SiteTitle": "Auth0 - ASP.NET 5 Web App Sample"
+  },
+  "Auth0": {
+		"ClientId": "{CLIENT_ID}",
+		"Domain": "{DOMAIN}",
+    "PostLogoutRedirectUri": "http://localhost:5001/"
+  }
+}
