@@ -1,4 +1,4 @@
-# Auth0 ASP.NET 5 Examples
+# Auth0 ASP.NET 5 Examples (beta6)
 
 ## WebApi-RS256-Sample
 
