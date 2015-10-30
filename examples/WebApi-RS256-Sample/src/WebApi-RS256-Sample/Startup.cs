@@ -1,14 +1,16 @@
 ﻿using System.IO;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Authentication.OAuthBearer;
+using Microsoft.AspNet.Authentication.JwtBearer;
 using Microsoft.Framework.Configuration;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Logging;
 using Microsoft.Framework.OptionsModel;
 using WebApiSample.Properties;
+using Microsoft.Dnx.Runtime;
 
 namespace WebApiSample
 {
@@ -16,9 +18,10 @@ namespace WebApiSample
     {
         public IConfiguration Configuration { get; set; }
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IHostingEnvironment env, IApplicationEnvironment app)
         {
-            this.Configuration = new ConfigurationBuilder(Path.GetFullPath(Path.Combine(env.WebRootPath, "..")))
+            this.Configuration = new ConfigurationBuilder()
+                .SetBasePath(app.ApplicationBasePath)
                 .AddJsonFile("config.json")
                 .AddEnvironmentVariables()
                 .Build();
@@ -26,7 +29,7 @@ namespace WebApiSample
         
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<Auth0Settings>(Configuration.GetConfigurationSection("Auth0"));
+            services.Configure<Auth0Settings>(Configuration.GetSection("Auth0"));
             services.AddMvc();
         }
 
@@ -38,20 +41,20 @@ namespace WebApiSample
             var logger = loggerfactory.CreateLogger("Auth0");
             var settings = app.ApplicationServices.GetService<IOptions<Auth0Settings>>();
 
-            app.UseOAuthBearerAuthentication(options =>
+            app.UseJwtBearerAuthentication(options =>
             {
-                options.Audience = settings.Options.ClientId;
-                options.Authority = $"https://{settings.Options.Domain}";
-                options.Notifications = new OAuthBearerAuthenticationNotifications
+                options.Audience = settings.Value.ClientId;
+                options.Authority = $"https://{settings.Value.Domain}";
+                options.Events = new JwtBearerEvents
                 {
-                    AuthenticationFailed = context =>
+                    OnAuthenticationFailed = context =>
                     {
                         logger.LogError("Authentication failed.", context.Exception);
                         return Task.FromResult(0);
                     },
                     // OPTIONAL: you can read/modify the claims that are populated based on the JWT
                     // Check issue status: https://github.com/aspnet/Security/issues/140
-                    /*SecurityTokenValidated = context =>
+                    /*OnValidatedToken = context =>
 					{
 						var claimsIdentity = context.AuthenticationTicket.Principal.Identity as ClaimsIdentity;
 						// ensure name claim

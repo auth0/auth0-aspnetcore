@@ -8,24 +8,26 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Authentication.OpenIdConnect;
 using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Authentication.Cookies;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 using Microsoft.Framework.Configuration;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Logging;
-using Microsoft.Framework.Logging.Console;
-using Microsoft.Framework.Runtime;
 using Microsoft.Framework.OptionsModel;
 
 using WebApp.Properties;
+
+using Microsoft.Dnx.Runtime;
 
 namespace WebApp
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
+        public Startup(IHostingEnvironment env, IApplicationEnvironment app)
         {
             // Setup configuration sources.
-            var builder = new ConfigurationBuilder(appEnv.ApplicationBasePath)
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(app.ApplicationBasePath)
                 .AddJsonFile("config.json")
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
@@ -36,16 +38,27 @@ namespace WebApp
         // This method gets called by the runtime.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<Auth0Settings>(this.Configuration.GetConfigurationSection("Auth0"));
-            services.Configure<AppSettings>(this.Configuration.GetConfigurationSection("AppSettings"));
             services.AddMvc();
-
-            // OpenID Connect Authentication Requires Cookie Auth
             services.AddWebEncoders();
             services.AddDataProtection();
-            services.Configure<ExternalAuthenticationOptions>(options =>
+
+            services.Configure<Auth0Settings>(Configuration.GetSection("Auth0"));
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<SharedAuthenticationOptions>(options =>
             {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            });
+
+
+            var settings = Configuration.Get<Auth0Settings>("Auth0");
+            services.ConfigureAuth0(settings.Domain, settings.ClientId, settings.ClientSecret, settings.RedirectUri, notification =>
+            {
+                var identity = notification.AuthenticationTicket.Principal.Identity as ClaimsIdentity;
+                if (identity.HasClaim(c => c.Type == "name"))
+                    identity.AddClaim(new Claim(ClaimTypes.Name, identity.FindFirst("name").Value));
+                identity.AddClaim(new Claim("tenant", "12345"));
+                identity.AddClaim(new Claim("custom-claim", "custom-value"));
+                return Task.FromResult(true);
             });
         }
 
@@ -57,11 +70,11 @@ namespace WebApp
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();
-                app.UseErrorPage();
+                app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseErrorHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Error");
             }
             
             app.UseStaticFiles();
@@ -72,27 +85,7 @@ namespace WebApp
                 options.LoginPath = new PathString("/Login");
             });
 
-            var logger = loggerFactory.CreateLogger("Auth0");
-
-            app.UseOpenIdConnectAuthentication(options =>
-            {
-                var settings = app.ApplicationServices.GetService<IOptions<Auth0Settings>>();
-                options.ClientId = settings.Options.ClientId;
-                options.Authority = $"https://{settings.Options.Domain}";
-                if (!String.IsNullOrEmpty(settings.Options.RedirectUri))
-                    options.RedirectUri = settings.Options.ClientId;
-
-                options.Notifications = new OpenIdConnectAuthenticationNotifications();
-                options.Notifications.SecurityTokenValidated = notification =>
-                {
-                    var identity = notification.AuthenticationTicket.Principal.Identity as ClaimsIdentity;
-                    if (identity.HasClaim(c => c.Type == "name"))
-                        identity.AddClaim(new Claim(ClaimTypes.Name, identity.FindFirst("name").Value));
-                    identity.AddClaim(new Claim("tenant", "12345"));
-                    identity.AddClaim(new Claim("custom-claim", "custom-value"));
-                    return Task.FromResult(true);
-                };
-            });
+            app.UseAuth0();
 
             app.UseMvc(routes =>
             {

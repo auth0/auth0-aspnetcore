@@ -3,8 +3,9 @@
     "SiteTitle": "Auth0 - ASP.NET 5 Web App Sample"
   },
   "Auth0": {
-		"ClientId": "{CLIENT_ID}",
-		"Domain": "{DOMAIN}",
-    "PostLogoutRedirectUri": "http://localhost:5001/"
+    "ClientId": "{CLIENT_ID}",
+    "ClientSecret": "{CLIENT_SECRET}",
+    "Domain": "{DOMAIN}",
+    "RedirectUri": "http://localhost:5001/"
   }
 }
