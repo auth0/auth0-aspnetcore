@@ -1,4 +1,4 @@
-﻿@inject Microsoft.Framework.OptionsModel.IOptions<WebApp.Properties.Auth0Settings> Auth0Settings
+﻿@inject Microsoft.Extensions.OptionsModel.IOptions<WebApp.Properties.Auth0Settings> Auth0Settings
 @model WebApp.Model.LoginModel
 @{
     ViewBag.Title = "Login";
@@ -17,12 +17,11 @@
 
     lock.show({
         closable: false,
-        callbackURL: window.location.origin,
+        callbackURL: window.location.origin + '/signin-oidc',
         authParams: {
             nonce: '@Model.Nonce',
             state: '@Model.State',
             scope: 'openid nickname email',
-            //response_mode: 'form_post',
             response_type: 'code'
         }
     });

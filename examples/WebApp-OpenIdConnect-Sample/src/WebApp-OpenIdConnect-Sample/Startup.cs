@@ -10,10 +10,11 @@ using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Authentication.Cookies;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
-using Microsoft.Framework.Configuration;
-using Microsoft.Framework.DependencyInjection;
-using Microsoft.Framework.Logging;
-using Microsoft.Framework.OptionsModel;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.PlatformAbstractions;
 
 using WebApp.Properties;
 
@@ -49,7 +50,6 @@ namespace WebApp
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             });
 
-
             var settings = Configuration.Get<Auth0Settings>("Auth0");
             services.ConfigureAuth0(settings.Domain, settings.ClientId, settings.ClientSecret, settings.RedirectUri, notification =>
             {
@@ -65,7 +65,8 @@ namespace WebApp
         // Configure is called after ConfigureServices is called.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole();
+            loggerFactory.MinimumLevel = LogLevel.Debug;
+            loggerFactory.AddConsole(LogLevel.Debug);
             
             if (env.IsDevelopment())
             {
@@ -81,8 +82,8 @@ namespace WebApp
 
             app.UseCookieAuthentication(options =>
             {
-                options.AutomaticAuthentication = true;
-                options.LoginPath = new PathString("/Login");
+                options.AutomaticAuthenticate = true;
+                options.LoginPath = new PathString("/Account/Login");
             });
 
             app.UseAuth0();

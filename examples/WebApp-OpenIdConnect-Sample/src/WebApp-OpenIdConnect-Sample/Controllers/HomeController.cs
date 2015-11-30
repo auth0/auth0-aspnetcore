@@ -10,7 +10,7 @@
             return this.View();
         }
 
-        [Authorize]
+        [Authorize(ActiveAuthenticationSchemes = "Cookies")]
         public IActionResult Profile()
         {
             return this.View(this.User.Claims);
