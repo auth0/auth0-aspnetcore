@@ -1,4 +1,4 @@
-# Auth0 ASP.NET 5 Examples (beta8)
+# Auth0 ASP.NET 5 Examples (RC1)
 
 ## WebApi-RS256-Sample
 
@@ -27,7 +27,7 @@ This sample shows how to use Auth0 for authentication with your ASP.NET MVC appl
 In order to run this sample, you must first configure your application in Auth0 as follows:
 
 - Go to https://manage.auth0.com/#/applications/{YOUR_AUTH0_CLIENT_ID}/settings
-- Set the `Allowed Callback URLs` to **http://localhost:5001**
+- Set the `Allowed Callback URLs` to **http://localhost:5001/signin-oidc**
 - Click on Show Advanced Settings button.
 - Set RS256 as JsonWebToken Token Signature Algorithm and click on Save.
 
