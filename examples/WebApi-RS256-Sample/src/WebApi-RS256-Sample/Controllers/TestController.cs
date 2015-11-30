@@ -8,9 +8,12 @@ namespace WebApiSample
     {
         [HttpGet]
         [Route("api/ping")]
-        public string Ping()
+        public object Ping()
         {
-            return "Pong. You accessed an unprotected endpoint.";
+            return new
+            {
+                message = "Pong. You accessed an unprotected endpoint."
+            };
         }
 
         [HttpGet]
