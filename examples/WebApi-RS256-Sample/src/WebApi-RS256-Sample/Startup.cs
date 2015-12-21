@@ -55,15 +55,16 @@ namespace WebApiSample
                         logger.LogError("Authentication failed.", context.Exception);
                         return Task.FromResult(0);
                     },
-                    // OPTIONAL: you can read/modify the claims that are populated based on the JWT
-                    // Check issue status: https://github.com/aspnet/Security/issues/140
-                    /*OnValidatedToken = context =>
+                    OnValidatedToken = context =>
 					{
 						var claimsIdentity = context.AuthenticationTicket.Principal.Identity as ClaimsIdentity;
-						// ensure name claim
-						claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, claimsIdentity.FindFirst("name").Value));
+                        claimsIdentity.AddClaim(new Claim("id_token", 
+                            context.Request.Headers["Authorization"][0].Substring(context.AuthenticationTicket.AuthenticationScheme.Length + 1));
+                        
+                        // OPTIONAL: you can read/modify the claims that are populated based on the JWT
+                        // claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, claimsIdentity.FindFirst("name").Value));
 						return Task.FromResult(0);
-					}*/
+					}
                 };
             });
             
