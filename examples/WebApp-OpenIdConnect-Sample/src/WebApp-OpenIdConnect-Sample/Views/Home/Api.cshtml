@@ -1,0 +1,52 @@
+﻿
+@{
+    ViewBag.Title = "Api Calls";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>Testing Api Access</h2>
+
+        <p>This page shows how to call your own APIs hosted within your web application.</p>
+
+        <button id="call-unprotected" class="btn btn-default">Call Unprotected Endpoint</button>
+        <button id="call-protected" class="btn btn-primary">Call Protected Endpoint</button>
+
+        <pre id="api-response" style="margin-top: 10px;" class="hidden"></pre>
+    </div>
+</div>
+
+@section scripts{
+<script type="text/javascript">
+    $('#call-unprotected').click(function (e) {
+        e.preventDefault();
+
+        $.ajax({ cache: false, url: "/api/ping" })
+        .done(function(data) {
+            $('#api-response').text(JSON.stringify(data, null, 2));
+        })
+        .fail(function(xhr) {
+            $('#api-response').text(JSON.stringify(xhr.responseJSON, null, 2));
+        })
+        .always(function() {
+            $('#api-response').removeClass('hidden');
+        });
+    });
+
+    $('#call-protected').click(function (e) {
+        e.preventDefault();
+
+        $.ajax({ cache: false, url: "/api/secured/ping" })
+        .done(function (data) {
+            $('#api-response').text(JSON.stringify(data, null, 2));
+        })
+        .fail(function (xhr) {
+            $('#api-response').text(xhr.responseJSON ? JSON.stringify(xhr.responseJSON, null, 2) : xhr.statusText);
+        })
+        .always(function () {
+            $('#api-response').removeClass('hidden');
+        });
+    });
+</script>
+
+}

@@ -51,13 +51,27 @@ namespace WebApp
             });
 
             var settings = Configuration.Get<Auth0Settings>("Auth0");
-            services.ConfigureAuth0(settings.Domain, settings.ClientId, settings.ClientSecret, settings.RedirectUri, notification =>
+            services.UseAuth0(settings.Domain, settings.ClientId, settings.ClientSecret, settings.RedirectUri, notification =>
             {
                 var identity = notification.AuthenticationTicket.Principal.Identity as ClaimsIdentity;
+
+                // Optional: add custom claims.
+                /* 
                 if (identity.HasClaim(c => c.Type == "name"))
                     identity.AddClaim(new Claim(ClaimTypes.Name, identity.FindFirst("name").Value));
                 identity.AddClaim(new Claim("tenant", "12345"));
                 identity.AddClaim(new Claim("custom-claim", "custom-value"));
+                */
+
+                // Optional: store tokens in the user object so you can retrieve those later.
+                /*
+                if (!String.IsNullOrEmpty(notification.TokenEndpointResponse.AccessToken))
+                    identity.AddClaim(new Claim("access_token", notification.TokenEndpointResponse.AccessToken));
+                if (!String.IsNullOrEmpty(notification.TokenEndpointResponse.IdToken))
+                    identity.AddClaim(new Claim("id_token", notification.TokenEndpointResponse.IdToken));
+                if (!String.IsNullOrEmpty(notification.TokenEndpointResponse.RefreshToken))
+                    identity.AddClaim(new Claim("refresh_token", notification.TokenEndpointResponse.RefreshToken)); 
+                */
                 return Task.FromResult(true);
             });
         }

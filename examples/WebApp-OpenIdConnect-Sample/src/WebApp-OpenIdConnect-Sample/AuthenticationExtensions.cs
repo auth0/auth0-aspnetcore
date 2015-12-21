@@ -22,7 +22,7 @@ namespace WebApp
 
         private static readonly RandomNumberGenerator CryptoRandom = RandomNumberGenerator.Create();
 
-        public static void ConfigureAuth0(this IServiceCollection services, string domain, string clientId, string clientSecret, string callbackUri, Func<AuthenticationValidatedContext, Task> onAuthenticationValidated = null)
+        public static void UseAuth0(this IServiceCollection services, string domain, string clientId, string clientSecret, string callbackUri, Func<AuthenticationValidatedContext, Task> onAuthenticationValidated = null)
         {
             if (onAuthenticationValidated == null)
             {

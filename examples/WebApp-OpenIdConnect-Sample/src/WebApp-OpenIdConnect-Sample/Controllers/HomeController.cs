@@ -10,6 +10,11 @@
             return this.View();
         }
 
+        public IActionResult Api()
+        {
+            return this.View();
+        }
+
         [Authorize(ActiveAuthenticationSchemes = "Cookies")]
         public IActionResult Profile()
         {
