@@ -59,7 +59,7 @@ namespace WebApiSample
 					{
 						var claimsIdentity = context.AuthenticationTicket.Principal.Identity as ClaimsIdentity;
                         claimsIdentity.AddClaim(new Claim("id_token", 
-                            context.Request.Headers["Authorization"][0].Substring(context.AuthenticationTicket.AuthenticationScheme.Length + 1));
+                            context.Request.Headers["Authorization"][0].Substring(context.AuthenticationTicket.AuthenticationScheme.Length + 1)));
                         
                         // OPTIONAL: you can read/modify the claims that are populated based on the JWT
                         // claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, claimsIdentity.FindFirst("name").Value));
