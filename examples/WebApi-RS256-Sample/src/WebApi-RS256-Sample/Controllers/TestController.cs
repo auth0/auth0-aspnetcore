@@ -1,10 +1,12 @@
-﻿using System.Linq;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Authorization;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace WebApiSample
 {
-    public class TestController : Controller
+    public class TestController : ControllerBase
     {
         [HttpGet]
         [Route("api/ping")]
@@ -16,8 +18,8 @@ namespace WebApiSample
             };
         }
 
+        [Authorize("Bearer")]
         [HttpGet]
-        [Authorize(ActiveAuthenticationSchemes = "Bearer")]
         [Route("api/secured/ping")]
         public object SecuredPing()
         {
