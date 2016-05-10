@@ -1,6 +1,7 @@
 ﻿{
-  "Auth0": {
-    "ClientId": "{CLIENT_ID}",
-    "Domain": "{DOMAIN}"
-  }
+    "Auth0": {
+        "Certificate": "{CERTIFICATE WITHOUT -----BEGIN CERTIFICA ....}" ,
+        "Domain": "{Auth0Domain}",
+        "ClientId": "{Auth0ClientID}"
+    }
 }
