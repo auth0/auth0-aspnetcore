@@ -1,0 +1,8 @@
+- name: Introduction
+  href: intro.md
+- name: Authenticating users in MVC
+  href: mvc/toc.yml
+- name: Securing your Web API
+  href: web-api
+- name: Using the Lock Tag Helper
+  href: lock
