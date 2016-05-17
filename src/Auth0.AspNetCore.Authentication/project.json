@@ -1,0 +1,48 @@
+﻿{
+  "version": "1.0.0-beta1-*",
+  "description": "ASP.NET Core extensions methods to configure Auth0 authentication",
+  "authors": [ "Jerrie Pelser" ],
+
+  "packOptions": {
+    "owners": [ "Auth0" ],
+
+    "projectUrl": "https://github.com/auth0/auth0-aspnetcore",
+    "iconUrl": "http://secure.gravatar.com/avatar/805765c256ff8617fcad483b5476faf2",
+    "licenseUrl": "http://opensource.org/licenses/MIT",
+
+    "repository": {
+      "type": "git",
+      "url": "git://github.com/auth0/auth0-aspnetcore"
+    },
+
+    "tags": [
+      "aspnetcore",
+      "authentication",
+      "auth0",
+      "oauth",
+      "openid connect",
+      "OIDC",
+      "security"
+    ]
+  },
+
+  "buildOptions": {
+    "warningsAsErrors": true,
+    "nowarn": [ "CS1591" ],
+    "xmlDoc": true
+  },
+
+  "dependencies": {
+    "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0-*",
+    "Microsoft.AspNetCore.Authentication.OpenIdConnect": "1.0.0-*"
+  },
+
+  "frameworks": {
+    "net451": { },
+    "netstandard1.4": {
+      "imports": [
+        "portable-net451+win8"
+      ]
+    }
+  }
+}

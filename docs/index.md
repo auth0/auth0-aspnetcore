@@ -13,4 +13,4 @@ On this website you will also find extensive examples that will guide you throug
 
 Further to the middleware configuration extensions, we also provide a tag helper support to integrate [Lock](https://auth0.com/docs/libraries/lock) into your own applications.
 
-Please refer to the [Guide section](xref:Guide) of this website for more information.
+Please refer to the [User Guide](xref:Guide) section of this website for more information.
