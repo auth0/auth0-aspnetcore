@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Auth0.AspNetCore.Authentication.Events;
 
 namespace AspNetCoreMvcSample
 {
@@ -59,6 +57,49 @@ namespace AspNetCoreMvcSample
                 options.ClientId = Configuration["auth0:clientId"];
                 options.ClientSecret = Configuration["auth0:clientSecret"];
                 options.SaveTokens = true;
+                options.Events = new Auth0Events
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                    OnAuthorizationCodeReceived = context =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                    OnMessageReceived = context =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                    OnRedirectToIdentityProvider = context =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                    OnRedirectToIdentityProviderForSignOut = context =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                    OnRemoteFailure = context =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                    OnTicketReceived = context =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                    OnTokenResponseReceived = context =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                    OnUserInformationReceived = context =>
+                    {
+                        return Task.FromResult(0);
+                    }
+                };
             });
 
             app.UseMvc(routes =>

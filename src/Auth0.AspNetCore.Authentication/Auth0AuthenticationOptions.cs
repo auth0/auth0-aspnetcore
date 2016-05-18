@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Auth0.AspNetCore.Authentication.Events;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
@@ -19,7 +21,6 @@ namespace Auth0.AspNetCore.Authentication
             Scope.Add("openid");
         }
 
-
         /// <summary>
         /// The AuthenticationScheme in the options corresponds to the logical name for a particular authentication scheme. A different
         /// value may be assigned in order to use the same authentication middleware type more than once in a pipeline.
@@ -35,8 +36,8 @@ namespace Auth0.AspNetCore.Authentication
         /// <summary>
         /// Gets or sets the issuer that should be used for any claims that are created
         /// </summary>
-        public string ClaimsIssuer { get;  set; }
-        
+        public string ClaimsIssuer { get; set; }
+
         /// <summary>
         /// Get or sets the Client ID of the Auth0 Application.
         /// </summary>
@@ -63,6 +64,11 @@ namespace Auth0.AspNetCore.Authentication
         /// want to use and copy the value of the Domain field.
         /// </remarks>
         public object Domain { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="Auth0Events"/> to notify when processing OpenIdConnect messages.
+        /// </summary>
+        public Auth0Events Events { get; set; } = new Auth0Events();
 
         /// <summary>
         /// Boolean to set whether the middleware should go to user info endpoint to retrieve additional claims or not after creating an identity from id_token received from token endpoint.
