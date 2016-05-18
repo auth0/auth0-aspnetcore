@@ -4,13 +4,14 @@
       "src": [
         {
           "files": [
-            "src/**.csproj"
+            "**project.json"
           ],
           "exclude": [
             "**/obj/**",
             "**/bin/**",
             "_site/**"
-          ]
+          ],
+          "cwd": "../src"
         }
       ],
       "dest": "api"

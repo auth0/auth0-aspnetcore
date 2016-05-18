@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Auth0.AspNetCore.Authentication.Events;
+using Auth0.AspNetCore.Authentication;
 
 namespace AspNetCoreMvcSample
 {
@@ -51,13 +52,13 @@ namespace AspNetCoreMvcSample
 
             app.UseStaticFiles();
 
-            app.UseAuth0(options =>
+            app.UseAuth0(new Auth0AuthenticationOptions()
             {
-                options.Domain = Configuration["auth0:domain"];
-                options.ClientId = Configuration["auth0:clientId"];
-                options.ClientSecret = Configuration["auth0:clientSecret"];
-                options.SaveTokens = true;
-                options.Events = new Auth0Events
+                Domain = Configuration["auth0:domain"],
+                ClientId = Configuration["auth0:clientId"],
+                ClientSecret = Configuration["auth0:clientSecret"],
+                SaveTokens = true,
+                Events = new Auth0Events
                 {
                     OnAuthenticationFailed = context =>
                     {
@@ -99,7 +100,7 @@ namespace AspNetCoreMvcSample
                     {
                         return Task.FromResult(0);
                     }
-                };
+                }
             });
 
             app.UseMvc(routes =>

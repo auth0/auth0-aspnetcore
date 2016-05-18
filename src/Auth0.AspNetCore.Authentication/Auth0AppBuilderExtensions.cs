@@ -2,7 +2,6 @@
 
 using System;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Auth0.AspNetCore.Authentication;
 using Auth0.AspNetCore.Authentication.Events;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +30,11 @@ namespace Microsoft.AspNetCore.Builder
 
         public static IApplicationBuilder UseAuth0(this IApplicationBuilder app, Auth0AuthenticationOptions options)
         {
+            if (options == null) throw new ArgumentNullException(nameof(options));
+            if (options.Domain == null) throw new ArgumentNullException(nameof(options.Domain));
+            if (options.ClientId == null) throw new ArgumentNullException(nameof(options.ClientId));
+            if (options.ClientSecret == null) throw new ArgumentNullException(nameof(options.ClientSecret));
+
             if (options.Events == null)
             {
                 options.Events = new Auth0Events();
