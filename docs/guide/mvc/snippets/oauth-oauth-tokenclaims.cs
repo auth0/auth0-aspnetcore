@@ -1,23 +1,26 @@
-app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
+app.UseOAuthAuthentication(new OAuthOptions
 {
-    ClaimsIssuer = "Auth0"
+    AuthenticationScheme = "Auth0",
 
-    Authority = "https://YOUR_AUTH0_DOMAIN",
+    AutomaticAuthenticate = true,
+    AutomaticChallenge = true
+
     ClientId = "APP_CLIENT_ID",
     ClientSecret = "APP_CLIENT_SECRET",
 
-    AutomaticAuthenticate = true, 
-    AutomaticChallenge = true,
-
-    ResponseType = "code",
-
     CallbackPath = new PathString("/signin-auth0"),
+
+    AuthorizationEndpoint = "https://YOUR_AUTH0_DOMAIN/authorize",
+    TokenEndpoint = "https://YOUR_AUTH0_DOMAIN/oauth/token",
+    UserInformationEndpoint = "https://YOUR_AUTH0_DOMAIN/userinfo",
+
+    Scope = { "openid" },
     
     SaveTokens = true,
     
-    Events = new OpenIdConnectEvents
+    Events = new OAuthEvents
     {
-        OnTicketReceived = context =>
+         OnTicketReceived = context =>
         {
             var identity = context.Principal.Identity as ClaimsIdentity;
             if (identity != null)

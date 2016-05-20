@@ -2,6 +2,8 @@
 uid: mvc-openid-connect
 ---
 
+## Using OpenID Connect
+
 Auth0 is built on open standards which means that you can use the standard ASP.NET Core middleware, such as the OIDC middleware, to sign users into your application.
 
 This document will guide you through configuring the OIDC middleware to work with Auth0.   
@@ -78,7 +80,7 @@ Another important configuration option which you may want to do is to add a Clai
 
 To achieve this you will need to handle the `OnTicketReceived` event in the OIDC middleware. The OIDC middleware will already set a Claim with the type of `name` which is the name of the user. You will simply need to retrieve that value and set it as the value for the Claim with the claim type of `ClaimTypes.Name`:
 
-[!code-csharp[Startup](snippets/oidc-oidc-nameclaim.cs?highlight=43-55)] 
+[!code-csharp[Startup](snippets/oidc-oidc-nameclaim.cs?highlight=16-31)] 
 
 ### Storing the tokens as claims
 
@@ -86,5 +88,5 @@ You may also want to add the tokens which was received by the OIDC middleware as
 
 Then simply locate the property called `.TokenNames` which will contain the names of all the token properties which was saved as a semi-colon separated list. The retrieve the values of the properties for each of those token names and save them as claims:
 
-[!code-csharp[Startup](snippets/oidc-oidc-tokenclaims.cs?highlight=41,50-61)] 
+[!code-csharp[Startup](snippets/oidc-oidc-tokenclaims.cs?highlight=16,20-40)] 
   
