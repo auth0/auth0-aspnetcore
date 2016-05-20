@@ -27,7 +27,7 @@ Install-Package Auth0.AspNetCore.Authentication
 
 The first step is to configure the relevant authentication middleware with the Dependency Injection container. You can do this by calling the `AddAuth0` extension method in the `ConfigureServices` method in the `Startup` class:
 
-[!code-csharp[Startup](snippets/extensions-services.cs?highlight=9)]
+[!code-csharp[Startup](snippets/extensions-services.cs?highlight=4)]
 
 ### 2. Configuring the Middleware
 
