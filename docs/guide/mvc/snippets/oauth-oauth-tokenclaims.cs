@@ -20,7 +20,7 @@ app.UseOAuthAuthentication(new OAuthOptions
     
     Events = new OAuthEvents
     {
-         OnTicketReceived = context =>
+        OnTicketReceived = context =>
         {
             var identity = context.Principal.Identity as ClaimsIdentity;
             if (identity != null)
