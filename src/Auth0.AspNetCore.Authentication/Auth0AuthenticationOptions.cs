@@ -19,6 +19,7 @@ namespace Auth0.AspNetCore.Authentication
             CallbackPath = new PathString(Auth0AuthenticationDefaults.CallbackPath);
 
             Scope.Add("openid");
+            Scope.Add("profile");
         }
 
         /// <summary>

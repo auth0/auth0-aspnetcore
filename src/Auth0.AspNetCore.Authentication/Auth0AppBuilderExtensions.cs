@@ -48,7 +48,8 @@ namespace Microsoft.AspNetCore.Builder
                 LogoutPath = new PathString("/logout")
             });
 
-            app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
+            // Configure OIDC options
+            var openIdConnectOptions = new OpenIdConnectOptions("Auth0")
             {
                 Authority = $"https://{options.Domain}",
                 AutomaticAuthenticate = false,
@@ -66,7 +67,8 @@ namespace Microsoft.AspNetCore.Builder
                     OnAuthorizationCodeReceived = context => options.Events.AuthorizationCodeReceived(context),
                     OnMessageReceived = context => options.Events.MessageReceived(context),
                     OnRedirectToIdentityProvider = context => options.Events.RedirectToIdentityProvider(context),
-                    OnRedirectToIdentityProviderForSignOut = context => options.Events.RedirectToIdentityProviderForSignOut(context),
+                    OnRedirectToIdentityProviderForSignOut =
+                        context => options.Events.RedirectToIdentityProviderForSignOut(context),
                     OnRemoteFailure = context => options.Events.RemoteFailure(context),
                     OnTicketReceived = context =>
                     {
@@ -85,7 +87,15 @@ namespace Microsoft.AspNetCore.Builder
                     OnTokenValidated = context => options.Events.TokenValidated(context),
                     OnUserInformationReceived = context => options.Events.UserInformationReceived(context)
                 }
-            });
+            };
+
+            // Set the scope
+            openIdConnectOptions.Scope.Clear();
+            foreach(string scope in options.Scope)
+                openIdConnectOptions.Scope.Add(scope);
+
+            // Register the OIDC middleware
+            app.UseOpenIdConnectAuthentication(openIdConnectOptions);
 
             app.Map("/login", builder =>
             {
