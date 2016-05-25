@@ -1,0 +1,16 @@
+﻿{
+  "version": "1.0.0-beta1",
+
+  "dependencies": {
+    "Microsoft.AspNetCore.Mvc.Razor": "1.0.0-*",
+    "Microsoft.AspNetCore.Authentication.OpenIdConnect": "1.0.0-*",
+    "Auth0.AspNetCore.Mvc.TagHelpers": "1.0.0-beta1"
+  },
+
+  "frameworks": {
+    "net451": { },
+    "netstandard1.5": {
+      "imports": "dnxcore50"
+    }
+  }
+}

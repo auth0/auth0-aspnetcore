@@ -1,31 +1,37 @@
 ﻿using Microsoft.AspNetCore.Razor.TagHelpers;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Auth0.AspNetCore.Mvc.TagHelpers
 {
     [HtmlTargetElement("lock")]
     public class LockTagHelper : TagHelper
     {
+        private string callbackUrl;
+        private string clientId;
+        private string domain;
 
         public LockMode Mode { get; set; }
 
-        public string CallbackUrl { get; set; }
-
-        public string Domain { get; set; }
-
-        public string ClientId { get; set; }
-
-        public override void Process(TagHelperContext context, TagHelperOutput output)
+        public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
+            // Create context which child configuration tag helpers will use to set correct parameters for Lock
+            var lockContext = new LockContext();
+            context.Items.Add(typeof(LockContext), lockContext);
+
+            // Allow child tag helpers to set correct configuration parameters
+            await output.GetChildContentAsync();
+
             string modalTemplate =
                 $@"
             <script src=""https://cdn.auth0.com/js/lock-9.1.min.js""></script>
             <script type=""text/javascript"">
   
-                var lock = new Auth0Lock('{ClientId}', '{Domain}');
+                var lock = new Auth0Lock('{lockContext.ClientId}', '{lockContext.Domain}');
   
                 function signin() {{
                     lock.show({{
-                        callbackURL: '{CallbackUrl}'
+                        callbackURL: '{lockContext.CallbackUrl}'
                         , responseType: 'code'
                         , authParams: {{
                         scope: 'openid email'
@@ -44,11 +50,11 @@ namespace Auth0.AspNetCore.Mvc.TagHelpers
                 <script src=""https://cdn.auth0.com/js/lock-9.1.min.js""></script>
                 <script>
   
-                    var lock = new Auth0Lock('{ClientId}', '{Domain}');
+                    var lock = new Auth0Lock('{lockContext.ClientId}', '{lockContext.Domain}');
   
                     lock.show({{
                         container: 'root'
-                    , callbackURL: '{CallbackUrl}'
+                    , callbackURL: '{lockContext.CallbackUrl}'
                     , responseType: 'code'
                     , authParams: {{
                         scope: 'openid email'  // Learn about scopes: https://auth0.com/docs/scopes 
@@ -57,7 +63,8 @@ namespace Auth0.AspNetCore.Mvc.TagHelpers
                 </script>
                 ";
 
-        output.TagName = "div";
+
+            output.TagName = "div";
 
             if (Mode == LockMode.Inline)
             {

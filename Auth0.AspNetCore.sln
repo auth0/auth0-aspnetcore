@@ -20,6 +20,10 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Auth0.AspNetCore.Mvc.TagHel
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "LockSample", "samples\LockSample\LockSample.xproj", "{1C6B8AE6-161F-45C5-B54F-A6E2376A0B7B}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Auth0.AspNetCore.Mvc.TagHelpers.Lock.OAuth", "src\Auth0.AspNetCore.Mvc.TagHelpers.Lock.OAuth\Auth0.AspNetCore.Mvc.TagHelpers.Lock.OAuth.xproj", "{02C08145-AC4C-4601-981E-52D2C79D6CF6}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Auth0.AspNetCore.Mvc.TagHelpers.Lock.OpenIdConnect", "src\Auth0.AspNetCore.Mvc.TagHelpers.Lock.OpenIdConnect\Auth0.AspNetCore.Mvc.TagHelpers.Lock.OpenIdConnect.xproj", "{95684320-12F1-429A-A66C-656251A59942}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +46,14 @@ Global
 		{1C6B8AE6-161F-45C5-B54F-A6E2376A0B7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C6B8AE6-161F-45C5-B54F-A6E2376A0B7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C6B8AE6-161F-45C5-B54F-A6E2376A0B7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02C08145-AC4C-4601-981E-52D2C79D6CF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02C08145-AC4C-4601-981E-52D2C79D6CF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02C08145-AC4C-4601-981E-52D2C79D6CF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02C08145-AC4C-4601-981E-52D2C79D6CF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95684320-12F1-429A-A66C-656251A59942}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95684320-12F1-429A-A66C-656251A59942}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95684320-12F1-429A-A66C-656251A59942}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95684320-12F1-429A-A66C-656251A59942}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,5 +63,7 @@ Global
 		{76BB0DD9-D30D-4520-8B9E-C01823557832} = {5FB45438-6551-4471-BA21-674886190AC4}
 		{C584FC9B-07E3-4FEF-A6B7-0DE148D0C36C} = {4DD43F00-3BFF-4498-B6AF-24E2B560AA03}
 		{1C6B8AE6-161F-45C5-B54F-A6E2376A0B7B} = {5FB45438-6551-4471-BA21-674886190AC4}
+		{02C08145-AC4C-4601-981E-52D2C79D6CF6} = {4DD43F00-3BFF-4498-B6AF-24E2B560AA03}
+		{95684320-12F1-429A-A66C-656251A59942} = {4DD43F00-3BFF-4498-B6AF-24E2B560AA03}
 	EndGlobalSection
 EndGlobal
