@@ -17,6 +17,7 @@ using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http.Authentication;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace LockSample
 {
@@ -44,66 +45,112 @@ namespace LockSample
             services.AddAuthentication(
                 options => options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
 
-            services.Configure<OAuthOptions>(options =>
-            {
-                options.AutomaticAuthenticate = false;
-                options.AutomaticChallenge = false;
+            // Configure OAuth2
+            //services.Configure<OAuthOptions>(options =>
+            //{
+            //    options.AutomaticAuthenticate = false;
+            //    options.AutomaticChallenge = false;
 
-                // We need to specify an Authentication Scheme
+            //    // We need to specify an Authentication Scheme
+            //    options.AuthenticationScheme = "Auth0";
+
+            //    // Configure the Auth0 Client ID and Client Secret
+            //    options.ClientId = Configuration["auth0:clientId"];
+            //    options.ClientSecret = Configuration["auth0:clientSecret"];
+
+            //    // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
+            //    // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
+            //    options.CallbackPath = new PathString("/signin-auth0");
+
+            //    // Configure the Auth0 endpoints                
+            //    options.AuthorizationEndpoint = $"https://{Configuration["auth0:domain"]}/authorize";
+            //    options.TokenEndpoint = $"https://{Configuration["auth0:domain"]}/oauth/token";
+            //    options.UserInformationEndpoint = $"https://{Configuration["auth0:domain"]}/userinfo";
+
+            //    // Set scope to openid. See https://auth0.com/docs/scopes
+            //    //options.Scope = { "openid" };
+
+            //    options.Events = new OAuthEvents
+            //    {
+            //        OnCreatingTicket = async context =>
+            //        {
+            //            // Retrieve user info
+            //            var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+            //            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+            //            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            //            var response = await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
+            //            response.EnsureSuccessStatusCode();
+
+            //            // Extract the user info object
+            //            var user = JObject.Parse(await response.Content.ReadAsStringAsync());
+
+            //            // Add the Name Identifier claim
+            //            var userId = user.Value<string>("user_id");
+            //            if (!string.IsNullOrEmpty(userId))
+            //            {
+            //                context.Identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId,
+            //                    ClaimValueTypes.String, context.Options.ClaimsIssuer));
+            //            }
+
+            //            // Add the Name claim
+            //            var email = user.Value<string>("email");
+            //            if (!string.IsNullOrEmpty(email))
+            //            {
+            //                context.Identity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, email,
+            //                    ClaimValueTypes.String, context.Options.ClaimsIssuer));
+            //            }
+            //        }
+            //    };
+            //});
+
+            // Configure OIDC
+            services.Configure<OpenIdConnectOptions>(options =>
+            {
                 options.AuthenticationScheme = "Auth0";
+                
+                // Set the authority to your Auth0 domain
+                options.Authority = $"https://{Configuration["auth0:domain"]}";
 
                 // Configure the Auth0 Client ID and Client Secret
                 options.ClientId = Configuration["auth0:clientId"];
                 options.ClientSecret = Configuration["auth0:clientSecret"];
 
+                // Do not automatically authenticate and challenge
+                options.AutomaticAuthenticate = false;
+                options.AutomaticChallenge = false;
+
+                // Set response type to code
+                options.ResponseType = "code";
+
                 // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
                 // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
                 options.CallbackPath = new PathString("/signin-auth0");
 
-                // Configure the Auth0 endpoints                
-                options.AuthorizationEndpoint = $"https://{Configuration["auth0:domain"]}/authorize";
-                options.TokenEndpoint = $"https://{Configuration["auth0:domain"]}/oauth/token";
-                options.UserInformationEndpoint = $"https://{Configuration["auth0:domain"]}/userinfo";
+                // Configure the Claims Issuer to be Auth0
+                options.ClaimsIssuer = "Auth0";
 
-                // Set scope to openid. See https://auth0.com/docs/scopes
-                //options.Scope = { "openid" };
-
-                options.Events = new OAuthEvents
+                options.Events = new OpenIdConnectEvents
                 {
-                    OnCreatingTicket = async context =>
+                    OnTicketReceived = context =>
                     {
-                        // Retrieve user info
-                        var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
-                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
-                        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                        var response = await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
-                        response.EnsureSuccessStatusCode();
-
-                        // Extract the user info object
-                        var user = JObject.Parse(await response.Content.ReadAsStringAsync());
-
-                        // Add the Name Identifier claim
-                        var userId = user.Value<string>("user_id");
-                        if (!string.IsNullOrEmpty(userId))
+                        // Get the ClaimsIdentity
+                        var identity = context.Principal.Identity as ClaimsIdentity;
+                        if (identity != null)
                         {
-                            context.Identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId,
-                                ClaimValueTypes.String, context.Options.ClaimsIssuer));
+                            // Add the Name ClaimType. This is required if we want User.Identity.Name to actually return something!
+                            if (!context.Principal.HasClaim(c => c.Type == ClaimTypes.Name) &&
+                                identity.HasClaim(c => c.Type == "name"))
+                                identity.AddClaim(new Claim(ClaimTypes.Name, identity.FindFirst("name").Value));
                         }
 
-                        // Add the Name claim
-                        var email = user.Value<string>("email");
-                        if (!string.IsNullOrEmpty(email))
-                        {
-                            context.Identity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, email,
-                                ClaimValueTypes.String, context.Options.ClaimsIssuer));
-                        }
+                        return Task.FromResult(0);
                     }
                 };
             });
 
             // Add framework services.
-            services.AddMvc(); 
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -129,13 +176,17 @@ namespace LockSample
             {
                 AutomaticAuthenticate = true,
                 AutomaticChallenge = true,
-                //LoginPath = new PathString("/account/login"),
+                LoginPath = new PathString("/login"),
                 //LogoutPath = new PathString("/account/logout")
             });
-            
+
             // Add the OAuth2 middleware
-            var options = app.ApplicationServices.GetRequiredService<IOptions<OAuthOptions>>();
-            app.UseOAuthAuthentication(options.Value);
+            //var options = app.ApplicationServices.GetRequiredService<IOptions<OAuthOptions>>();
+            //app.UseOAuthAuthentication(options.Value);
+
+            // Add the OIDC middleware
+            var options = app.ApplicationServices.GetRequiredService<IOptions<OpenIdConnectOptions>>();
+            app.UseOpenIdConnectAuthentication(options.Value);
 
             // Listen for requests on the /login path, and issue a challenge to log in with the OIDC middleware
             app.Map("/login", builder =>
@@ -143,7 +194,9 @@ namespace LockSample
                 builder.Run(async context =>
                 {
                     // Return a challenge to invoke the Auth0 authentication scheme
-                    await context.Authentication.ChallengeAsync("Auth0", new AuthenticationProperties() { RedirectUri = "/" });
+                    await
+                        context.Authentication.ChallengeAsync("Auth0",
+                            new AuthenticationProperties() {RedirectUri = "/"});
                 });
             });
 

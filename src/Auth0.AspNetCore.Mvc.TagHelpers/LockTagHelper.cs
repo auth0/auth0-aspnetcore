@@ -36,6 +36,7 @@ namespace Auth0.AspNetCore.Mvc.TagHelpers
                         , authParams: {{
                             scope: 'openid email'
                             , state: '{lockContext.State}'
+                            , nonce: '{lockContext.Nonce}'
                         }}
                     }});
                 }}
@@ -60,6 +61,7 @@ namespace Auth0.AspNetCore.Mvc.TagHelpers
                     , authParams: {{
                         scope: 'openid email'  // Learn about scopes: https://auth0.com/docs/scopes 
                         , state: '{lockContext.State}'
+                            , nonce: '{lockContext.Nonce}'
                     }}
                     }});
                 </script>

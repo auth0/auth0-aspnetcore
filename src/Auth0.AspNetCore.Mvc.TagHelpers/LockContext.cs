@@ -9,6 +9,7 @@
         public string ClientSecret { get; set; }
 
         public string Domain { get; set; }
+        public string Nonce { get; set; }
         public string State { get; set; }
     }
 }

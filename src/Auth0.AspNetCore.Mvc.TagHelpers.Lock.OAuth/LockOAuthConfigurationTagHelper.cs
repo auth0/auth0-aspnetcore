@@ -44,8 +44,7 @@ namespace Auth0.AspNetCore.Mvc.TagHelpers.Lock.OAuth
 
         public override Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
-            var alloptions = _serviceProvider.GetServices<IOptions<OAuthOptions>>();
-            var options = alloptions.FirstOrDefault(o => o.Value.AuthenticationScheme == AuthenticationScheme)?.Value;
+            var options = _serviceProvider.GetServices<IOptions<OAuthOptions>>().FirstOrDefault(o => o.Value.AuthenticationScheme == AuthenticationScheme)?.Value;
 
             if (options != null)
             {
@@ -73,7 +72,7 @@ namespace Auth0.AspNetCore.Mvc.TagHelpers.Lock.OAuth
                 GenerateCorrelationId(properties, options);
 
                 // Generate State
-                lockContext.State = options.StateDataFormat.Protect(properties);
+                lockContext.State = Uri.EscapeDataString(options.StateDataFormat.Protect(properties));
             }
 
             output.SuppressOutput();
