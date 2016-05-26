@@ -16,6 +16,7 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Http.Authentication;
 
 namespace LockSample
 {
@@ -45,8 +46,8 @@ namespace LockSample
 
             services.Configure<OAuthOptions>(options =>
             {
-                options.AutomaticAuthenticate = true;
-                options.AutomaticChallenge = true;
+                options.AutomaticAuthenticate = false;
+                options.AutomaticChallenge = false;
 
                 // We need to specify an Authentication Scheme
                 options.AuthenticationScheme = "Auth0";
@@ -135,6 +136,16 @@ namespace LockSample
             // Add the OAuth2 middleware
             var options = app.ApplicationServices.GetRequiredService<IOptions<OAuthOptions>>();
             app.UseOAuthAuthentication(options.Value);
+
+            // Listen for requests on the /login path, and issue a challenge to log in with the OIDC middleware
+            app.Map("/login", builder =>
+            {
+                builder.Run(async context =>
+                {
+                    // Return a challenge to invoke the Auth0 authentication scheme
+                    await context.Authentication.ChallengeAsync("Auth0", new AuthenticationProperties() { RedirectUri = "/" });
+                });
+            });
 
             app.UseMvc(routes =>
             {

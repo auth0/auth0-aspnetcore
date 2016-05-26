@@ -34,7 +34,8 @@ namespace Auth0.AspNetCore.Mvc.TagHelpers
                         callbackURL: '{lockContext.CallbackUrl}'
                         , responseType: 'code'
                         , authParams: {{
-                        scope: 'openid email'
+                            scope: 'openid email'
+                            , state: '{lockContext.State}'
                         }}
                     }});
                 }}
@@ -58,6 +59,7 @@ namespace Auth0.AspNetCore.Mvc.TagHelpers
                     , responseType: 'code'
                     , authParams: {{
                         scope: 'openid email'  // Learn about scopes: https://auth0.com/docs/scopes 
+                        , state: '{lockContext.State}'
                     }}
                     }});
                 </script>
