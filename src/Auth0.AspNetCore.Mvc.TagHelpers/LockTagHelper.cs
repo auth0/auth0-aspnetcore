@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 namespace Auth0.AspNetCore.Mvc.TagHelpers
 {
     [HtmlTargetElement("lock")]
+    [RestrictChildren("lock-static-configuration", "lock-oauth-configuration", "lock-openidconnect-configuration")]
     public class LockTagHelper : TagHelper
     {
         private string callbackUrl;

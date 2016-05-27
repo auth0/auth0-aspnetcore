@@ -4,34 +4,19 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.Authentication;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Options;
 
 namespace Auth0.AspNetCore.Mvc.TagHelpers.Lock.OpenIdConnect
 {
     [HtmlTargetElement("lock-openidconnect-configuration", ParentTag = "lock")]
-    public class LockOpenIdConnectConfigurationTagHelper : TagHelper
+    public class LockOpenIdConnectConfigurationTagHelper : LockRemoteConfigurationTagHelper
     {
-        private const string CorrelationPrefix = ".AspNetCore.Correlation.";
-        private const string CorrelationProperty = ".xsrf";
-        private const string CorrelationMarker = "N";
         private const string NonceProperty = "N";
 
         private readonly IServiceProvider _serviceProvider;
-        private static readonly RandomNumberGenerator CryptoRandom = RandomNumberGenerator.Create();
-        private HttpRequest Request => ViewContext.HttpContext.Request;
-        private HttpResponse Response => ViewContext.HttpContext.Response;
-
-        public string AuthenticationScheme { get; set; }
-
-        [ViewContext]
-        public ViewContext ViewContext { get; set; }
 
         public LockOpenIdConnectConfigurationTagHelper(IServiceProvider serviceProvider)
         {
@@ -81,7 +66,7 @@ namespace Auth0.AspNetCore.Mvc.TagHelpers.Lock.OpenIdConnect
                     RedirectUri = "/"
                 };
                 properties.Items[OpenIdConnectDefaults.RedirectUriForCodePropertiesKey] = callbackUrl;
-                GenerateCorrelationId(properties, options);
+                GenerateCorrelationId(properties, options.AuthenticationScheme);
 
                 // Generate State
                 lockContext.State = Uri.EscapeDataString(options.StateDataFormat.Protect(properties));
@@ -89,36 +74,6 @@ namespace Auth0.AspNetCore.Mvc.TagHelpers.Lock.OpenIdConnect
 
             output.SuppressOutput();
             return Task.FromResult(0);
-        }
-
-        protected string BuildRedirectUri(PathString redirectPath)
-        {
-            return Request.Scheme + "://" + Request.Host + redirectPath;
-        }
-
-        protected virtual void GenerateCorrelationId(AuthenticationProperties properties, OpenIdConnectOptions options)
-        {
-            if (properties == null)
-            {
-                throw new ArgumentNullException(nameof(properties));
-            }
-
-            var bytes = new byte[32];
-            CryptoRandom.GetBytes(bytes);
-            var correlationId = Base64UrlTextEncoder.Encode(bytes);
-
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = Request.IsHttps,
-                Expires = properties.ExpiresUtc
-            };
-
-            properties.Items[CorrelationProperty] = correlationId;
-
-            var cookieName = CorrelationPrefix + options.AuthenticationScheme + "." + correlationId;
-
-            Response.Cookies.Append(cookieName, CorrelationMarker, cookieOptions);
         }
     }
 }
