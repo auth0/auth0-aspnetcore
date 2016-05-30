@@ -44,7 +44,8 @@ namespace Auth0.AspNetCore.Mvc.TagHelpers.Lock.OAuth
                 // OAuth middleware can validate it correctly once it picks up from the 2nd leg (receiving the code)
                 AuthenticationProperties properties = new AuthenticationProperties
                 {
-                    ExpiresUtc = options.SystemClock.UtcNow.Add(options.RemoteAuthenticationTimeout)
+                    ExpiresUtc = options.SystemClock.UtcNow.Add(options.RemoteAuthenticationTimeout),
+                    RedirectUri = ReturnUrl ?? "/"
                 };
                 GenerateCorrelationId(properties, options.AuthenticationScheme);
 

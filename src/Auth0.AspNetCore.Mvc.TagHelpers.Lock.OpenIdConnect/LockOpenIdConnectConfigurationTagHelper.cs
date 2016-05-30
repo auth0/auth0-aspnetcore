@@ -63,7 +63,7 @@ namespace Auth0.AspNetCore.Mvc.TagHelpers.Lock.OpenIdConnect
                 var properties = new AuthenticationProperties()
                 {
                     ExpiresUtc = options.SystemClock.UtcNow.Add(options.RemoteAuthenticationTimeout),
-                    RedirectUri = "/"
+                    RedirectUri = ReturnUrl ?? "/"
                 };
                 properties.Items[OpenIdConnectDefaults.RedirectUriForCodePropertiesKey] = callbackUrl;
                 GenerateCorrelationId(properties, options.AuthenticationScheme);

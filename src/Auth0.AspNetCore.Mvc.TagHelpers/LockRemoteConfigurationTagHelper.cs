@@ -20,12 +20,14 @@ namespace Auth0.AspNetCore.Mvc.TagHelpers
 
         public string AuthenticationScheme { get; set; }
 
+        public string ReturnUrl { get; set; }
+
         [ViewContext]
         public ViewContext ViewContext { get; set; }
 
         protected string BuildRedirectUri(PathString redirectPath)
         {
-            return Request.Scheme + "://" + Request.Host + redirectPath;
+            return Request.Scheme + "://" + Request.Host + Request.PathBase + redirectPath;
         }
 
         protected virtual void GenerateCorrelationId(AuthenticationProperties properties, string authenticationScheme)

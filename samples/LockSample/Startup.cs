@@ -176,8 +176,8 @@ namespace LockSample
             {
                 AutomaticAuthenticate = true,
                 AutomaticChallenge = true,
-                LoginPath = new PathString("/login"),
-                //LogoutPath = new PathString("/account/logout")
+                LoginPath = new PathString("/account/login"),
+                LogoutPath = new PathString("/account/logout")
             });
 
             // Add the OAuth2 middleware
@@ -187,18 +187,6 @@ namespace LockSample
             // Add the OIDC middleware
             //var options = app.ApplicationServices.GetRequiredService<IOptions<OpenIdConnectOptions>>();
             //app.UseOpenIdConnectAuthentication(options.Value);
-
-            // Listen for requests on the /login path, and issue a challenge to log in with the OIDC middleware
-            app.Map("/login", builder =>
-            {
-                builder.Run(async context =>
-                {
-                    // Return a challenge to invoke the Auth0 authentication scheme
-                    await
-                        context.Authentication.ChallengeAsync("Auth0",
-                            new AuthenticationProperties() {RedirectUri = "/"});
-                });
-            });
 
             app.UseMvc(routes =>
             {
